@@ -3,8 +3,9 @@ import pygame
 import requests
 
 
-def maps_third_part(cords, scale):
+def maps_fourth_part(cords, scale):
     response = None
+    regime = 'map'
     first_scale = scale
     x_cords = float(cords[0])
     y_cords = float(cords[1])
@@ -14,6 +15,7 @@ def maps_third_part(cords, scale):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_PAGEDOWN:
                     if first_scale < 1:
@@ -46,7 +48,15 @@ def maps_third_part(cords, scale):
                     x_cords -= 0.5
                     if x_cords <= -179:
                         x_cords = 179
-        response = requests.get("http://static-maps.yandex.ru/1.x/?ll={},{}&spn={},{}&l=sat".format(x_cords, y_cords, scale, scale))
+
+                elif event.key == pygame.K_1:
+                    regime = 'map'
+                elif event.key == pygame.K_2:
+                    regime = 'sat'
+                elif event.key == pygame.K_3:
+                    regime = 'sat,skl'
+
+        response = requests.get("http://static-maps.yandex.ru/1.x/?ll={},{}&spn={},{}&l={}".format(x_cords, y_cords, scale, scale, regime))
         map_file = "map.png"
         with open(map_file, "wb") as file:
             file.write(response.content)
@@ -63,6 +73,7 @@ if __name__ == '__main__':
 и от -80 до 80 для долготы (второго числа). Пример: координаты Москвы имеют вид 37.748073 55.658824
 Так же во воторой строке вам нужно одним числом ввести масштаб карты в пределах от 0.01 до 65. Оптимальными координатами являются числа от 0.1 до 1.
 Пример масштаба: 0.5
+Для переключения режима карты используются кнопки '1'(для схемы), '2'(для спутника) и '3'(для гибрида).
         ''')
     cords = input('Введите координаты (через пробел): ').split()
     scale = float(input('Введите масштаб (одно число): '))
@@ -72,4 +83,4 @@ if __name__ == '__main__':
         cords = input('Введите координаты (через пробел): ').split()
         scale = float(input('Введите масштаб (одно число): '))
     # 45.029903 53.189908 Координаты Пензы
-    maps_third_part(cords, scale)
+    maps_fourth_part(cords, scale)
